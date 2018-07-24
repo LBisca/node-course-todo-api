@@ -1,9 +1,9 @@
 var mongoose = require('mongoose')
 
-var Users = mongoose.model('Users', {
+var User = mongoose.model('User', {
     userName: {
         type: String,
-        required: true,
+        required: false,
         minlength: 4,
         trim: true
     },
@@ -11,14 +11,14 @@ var Users = mongoose.model('Users', {
         type: String,
         trim:true,
         minlength: 1,
-        required: true
+        required: false
     },
     password: {
         type: String,
-        required: true,
+        required: false,
         minlength: 6,
         trim: true
     }
 })
 
-module.exports = {Users}
+module.exports = {User}
