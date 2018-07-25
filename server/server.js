@@ -2,6 +2,8 @@ var express = require('express')
 var _ = require('lodash')
 var bodyParser = require('body-parser')
 var { ObjectID } = require('mongodb')
+const {SHA256} = require('crypto-js')
+const jwt = require('jsonwebtoken')
 
 var { mongoose } = require('./db/mongoose')
 var { Todo } = require('./models/todo')
@@ -34,16 +36,15 @@ app.get('/todos', (req, res) => {
 })
 
 app.post('/user', (req, res) => {
-    var user = new User({
-        userName: req.body.userName,
-        email: req.body.email,
-        password: req.body.password
-    })
+    var body = _.pick(req.body, ['email', 'password'])
+    var user = new User(body)
 
-    user.save().then((doc) => {
-        res.send(doc)
-    }, (e) => {
-        res.status(400).send(e)
+    user.save().then(() => {
+        return user.generateAuthToken()
+    }).then((token) => {
+        res.header('x-auth', token).send(user)
+    }).catch((e) => {   
+        res.status(400).send(e)    
     })
 })
 
